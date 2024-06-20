@@ -1,0 +1,48 @@
+<aura:component implements="lightning:isUrlAddressable">
+    <aura:handler name="init" value="{!this}" action="{!c.doinit}"/>
+    <aura:attribute name="orderId" type="String"/>
+    
+    <aura:attribute name="record" type="Object"/>
+    <aura:attribute name="targerError" type="String"/>
+    <aura:attribute name="orderRecord" type="Object"/>
+    
+    <force:recordData aura:id="recordViewer"
+                      recordId="{!v.orderId}"
+                      layoutType="FULL"
+                      targetError="{!v.targerError}"
+                      targetFields="{!v.orderRecord}"
+                      targetRecord="{!v.record}"/>
+    <div class="header">
+        <div class="slds-page-header">
+            <div class="slds-page-header__row">
+                <div class="slds-page-header__col-title">
+                    <div class="slds-media">
+                        <div class="slds-media__figure">
+                            <lightning:icon iconName="standard:order_item" title="order_item" />
+                        </div>
+                        <div class="slds-media__body">
+                            <div class="slds-page-header__name">
+                                <div class="slds-page-header__name-title">
+                                    <h1>
+                                        <span class="slds-page-header__title slds-truncate" title="Order Details">Order Details</span>
+                                    </h1>
+                                </div>
+                            </div>
+                            <p class="slds-page-header__name-meta">{!v.orderRecord.Order_Number__c} </p>
+                            <p><lightning:formattedDateTime value="{!v.orderRecord.CreatedDate}" weekday="long" year="2-digit" month="short" day="2-digit"/></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="slds-var-p-around_small">
+        <lightning:recordForm recordId="{!v.orderId}"
+                              objectApiName="Beer_Order__c"
+                              layoutType="Full"
+                              columns="2"
+                              mode="readonly"/>
+    </div>  
+    
+</aura:component>

@@ -1,0 +1,12 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId" access="global">
+    <aura:attribute name="mapMarkers" type="Object"/>
+    <aura:attribute name="zoomLevel" type="Integer"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <div>
+    	<lightning:map aura:id="accountMap"
+                       zoomLevel="{!v.zoomLevel}"
+                       mapMarkers="{!v.mapMarkers}"/>
+    </div>
+</aura:component>

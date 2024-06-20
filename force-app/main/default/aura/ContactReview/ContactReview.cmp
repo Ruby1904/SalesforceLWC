@@ -1,0 +1,29 @@
+<aura:component >
+    <aura:attribute name="ContactRecords" type="Object"/>
+    <aura:registerEvent name="SelectRecordEvent" type="c:SelectRecordEvent"/>
+    
+    <div>
+        <aura:iteration items="{!v.ContactRecords}" var="con" indexVar="index">
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-4">
+                    {!con.FirstName}
+                </div>
+                <div class="slds-col slds-size_1-of-4">
+                     {!con.LastName}
+                </div>
+                <div class="slds-col slds-size_1-of-4">
+                     {!con.Email}
+                </div>
+                <div class="slds-col slds-size_1-of-4">
+                     {!con.Title}&nbsp; &nbsp;
+                    <a href="JavaScript:void(0);" id="{!index}" onclick="{!c.RemoveRecord}">
+                    Remove</a>
+                    
+                    <a href="JavaScript:void(0);" id="{!index}" onclick="{!c.EditRecord}">
+                    Edit</a>
+                </div>
+            </div>
+        </aura:iteration>
+    </div>
+	
+</aura:component>
