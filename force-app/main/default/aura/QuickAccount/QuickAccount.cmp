@@ -1,0 +1,8 @@
+<aura:component implements="force:lightningQuickAction,force:hasRecordId,force:hasSObjectName,lightning:actionOverride,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome" >
+	<div>
+    	<h1>I am in Quick Action</h1>
+        {!v.recordId}<br/>
+        {!v.sObjectName}
+        <lightning:button label= "close action" onclick="{!c.doclose}"/>
+    </div>
+</aura:component>

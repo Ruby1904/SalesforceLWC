@@ -1,0 +1,18 @@
+<apex:page >
+    <apex:includeLightning />
+    <div id="lightning">
+        
+    </div>
+    <script>
+    	$Lightning.use('c:auralearningapp',function(){
+            $Lightning.createComponent('c:lightninglayout', 											//cmp name
+                                       {
+                                           "greeting" : "I am in VF page"
+                                       }, 																//attribute
+                                       "lightning",  													//domlocator
+                                       function(component){ 											//callback func
+                                       		component.set('v.greeting',"I am from callback func");
+                                       });
+        });
+    </script>
+</apex:page>

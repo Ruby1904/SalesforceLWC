@@ -1,0 +1,39 @@
+<aura:component>
+    <lightning:navigation aura:id ="navigation"/>
+    <aura:attribute name="beerRecords" type="List" />
+    <aura:attribute name="beerId" type="String"/>
+    <lightning:overlayLibrary aura:id="overlayLib"/>
+    <aura:registerEvent name="addToCart" type="c:AddToCart"/>
+    <div class="slds-var-p-around_large">
+        <div class="slds-grid slds-wrap">
+            <aura:iteration items="{!v.beerRecords}" var="x" indexVar="index">
+                <div class="slds-col slds-size_1-of-4 slds-p-around_medium ">
+                    <lightning:card title="{!x.Name}" iconName="custom:custom56" footer="">
+                        <p class="slds-p-horizontal_small">
+                            <div class ="slds-grid slds-gutters">
+                                <div class="slds-col slds-size_1-of-3">
+                                    <img src="{!$Resource.Beer}" />
+                                </div>
+                                <div class="slds-p-horizontal_small"> Name: {!x.Name}<br/> Alcohol %: {!x.Alcohol__c}<br/>
+                                    Total: {!x.Total__c}<br/>Price: ${!x.Price__c}
+                                
+                                </div>
+                            </div>
+                        </p>
+                        <aura:set attribute="actions">
+                            <lightning:button name="{!x.Id}" label="View Details" value="View Details" variant="brand" onclick="{!c.showinfo}"/>
+                        </aura:set>
+                        <aura:set attribute="footer">
+                            <lightning:button name="{!x.Id}" label="Add to Cart" value="{!index}" variant="brand" onclick="{!c.addtocart}"/>
+                             &nbsp; &nbsp;&nbsp;<lightning:button name="{!x.Id}" label="Buy Now" value="{!index}" variant="brand" onclick="{!c.dobuy}"/>
+                        </aura:set>
+                    </lightning:card>
+                </div>
+            </aura:iteration>
+        </div>
+    </div>
+    <!--<aura:if isTrue="{!v.beerId != null}">
+        <c:BeerDetails beerId="{!v.beerId}"/>
+    </aura:if>-->
+                                                                            
+</aura:component>

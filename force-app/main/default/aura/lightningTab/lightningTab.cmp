@@ -1,0 +1,37 @@
+<aura:component >
+    <aura:attribute name="accinfo" type="String"/>
+    <aura:attribute name="options" type="List" default="['Account','Lead','Contact','Case']"/>
+    <div class="slds-var-p-around_small">
+        <lightning:tabset variant="scoped" selectedTabId="Account">
+            <aura:iteration items="{!v.options}" var="item">
+                <aura:if isTrue="{!item == 'Account'}">
+                    <lightning:tab label="{!item}" id="{!item}"  onactive="{!c.handleActive}">
+                        {!v.accinfo}
+                    </lightning:tab>
+                    <aura:set attribute="else">
+                        <lightning:tab label="{!item}" id="{!item}"  onactive="{!c.handleActive}">
+                        </lightning:tab>
+                    </aura:set>
+                </aura:if>
+            </aura:iteration>
+        </lightning:tabset>
+    </div>
+    
+   <!--  <div class="slds-var-p-around_small">
+        <lightning:tabset variant="vertical" selectedTabId="Account">
+            <lightning:tab label="Account" id="acc" onactive="{!c.handleActive}">
+                {!v.accinfo}
+            </lightning:tab>
+            <lightning:tab label="Lead" id="lead"  onactive="{!c.handleActive}">
+                Lead info
+            </lightning:tab>
+            <lightning:tab label="Contact" id="con"  onactive="{!c.handleActive}">
+                Contact info
+            </lightning:tab>
+            <lightning:tab label="Case" id="case"  onactive="{!c.handleActive}">
+                Case info
+            </lightning:tab>
+        </lightning:tabset>
+    </div>-->
+    
+</aura:component>

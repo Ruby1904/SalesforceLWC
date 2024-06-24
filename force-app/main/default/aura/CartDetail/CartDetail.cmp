@@ -1,0 +1,219 @@
+<aura:component implements="lightning:isUrlAddressable" controller="CartDetailAuraService" >
+    <aura:attribute name="cartItemList" type="object"/>
+    <aura:attribute name="subTotal" type="Integer"/>
+    <aura:attribute name="isCouponApplied" type="Boolean"/>
+    <aura:attribute name="isCouponSuccess" type="Boolean"/>
+    <aura:attribute name="isCheckout" type="Boolean"/>
+    <aura:attribute name="isNewAddress" type="Boolean"/>
+    <aura:attribute name="discountAmount" type="Integer"/>
+    <aura:attribute name="errorDiscount" type="String"/>
+    <aura:attribute name="CartId" type="String"/>
+    <lightning:navigation aura:id="navigation"/>
+    <aura:attribute name="selectedAddress" type="object"/>
+    
+    <aura:handler name="change" value="{!v.isCheckout}" action="{!c.getAddress}"/>
+    
+    <aura:attribute name="addressBook" type="Address_Book__c" default="{
+                                                                       sobjectType : 'Address_Book__c',
+                                                                       Street__c   :'',
+                                                                       City__c     : '',
+                                                                       State__c    : '',
+                                                                       Postal_Code__c : '',
+                                                                       Country__c      : ''
+                                                                       }"/>
+    <aura:attribute name="record" type="Object" />
+    <aura:attribute name="recordError" type="String" />
+    
+    <force:recordData
+                      aura:id="CreateRecord"
+                      layoutType="FULL"
+                      mode="EDIT"
+                      targetRecord="{!v.record}"
+                      targetFields="{!v.addressBook}"
+                      targetError="{!v.recordError}"
+                      />
+    
+    <aura:attribute name="addressList" type="object"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <div class="c-container">
+        <lightning:layout multipleRows="true">
+            <lightning:layoutItem padding="around-small" size="12">
+                <div class="page-section page-header">
+                    <h2><b>Beer Explorer</b></h2>
+                </div>
+            </lightning:layoutItem>
+            <lightning:layoutItem padding="around-small" size="12">
+                <lightning:layout>
+                    <aura:if isTrue="{!!v.isCheckout}">
+                        <lightning:layoutItem padding="around-small" size="9">
+                            <div class="page-section page-main">
+                                <h2 class="slds-text-title_caps" style="height: 55px;
+                                                                        background: darkseagreen;
+                                                                        line-height: 3;
+                                                                        padding-left: 10px;
+                                                                        font-size: 19px;
+                                                                        font-weight: bold;">
+                                    SHOPPING CART({!v.cartItemList.length})
+                                </h2>
+                                <br/>
+                                <p>{!v.isNewAddress}</p>
+                                <aura:if isTrue="{!v.cartItemList.length > 0}">
+                                    <div class="slds-grid slds-wrap">
+                                        <div class="slds-col slds-size_1-of-4"><b>Beer Name</b></div>
+                                        <div class="slds-col slds-size_1-of-4"><b>Price</b></div>
+                                        <div class="slds-col slds-size_1-of-4"><b>Quantity</b></div>
+                                        <div class="slds-col slds-size_1-of-4"><b>Click to Remove Item</b></div>
+                                    </div>
+                                    <aura:iteration items="{!v.cartItemList}" var="item" indexvar="index">
+                                        <c:CartItem cartItem="{!item}" index="{!index}"/>
+                                    </aura:iteration>
+                                    <lightning:buttonGroup>
+                                        <lightning:button label="Continue Shopping"
+                                                          onclick="{!c.homePage}"/>
+                                        <lightning:button label="Proceed Checkout"
+                                                          variant="brand"
+                                                          onclick="{!c.docheckout}"/>
+                                    </lightning:buttonGroup>     
+                                    <aura:set attribute="else">
+                                        <img src="{!$Resource.EmptyCart}" class="slds-align_absolute-center"/><br/>
+                                        <a href="JavaScript:void(0);" class="slds-align_absolute-center" onclick="{!c.homePage}">
+                                            <button class="slds-button slds-button_brand"> Click Here to add Items</button> 
+                                        </a>
+                                    </aura:set>
+                                </aura:if>
+                            </div>
+                        </lightning:layoutItem> 
+                    </aura:if>
+                    <aura:if isTrue="{!v.isCheckout}">
+                        <lightning:layoutItem padding="around-small" size="9">
+                            <div class="page-section page-main">
+                                <h1><b> Select Billing/Shipping Address</b></h1><br/>
+                                <aura:if isTrue="{!and(v.addressList.length > 0, !v.isNewAddress)}">
+                                    <div class="slds-grid slds-wrap">
+                                        <aura:iteration items="{!v.addressList}" var="items"
+                                                        indexVar="index">
+                                            
+                                            <div class="slds-col slds-size_1-of-2">
+                                                <ui:inputRadio aura:id="r0" name="others" label="" change="{!c.onSelect}"
+                                                               text="{!index}"/>
+                                                
+                                                
+                                                
+                                                <lightning:formattedAddress
+                                                                            street="{!items.Street__c}"
+                                                                            city="{!items.City__c}"
+                                                                            country="{!items.Country__c}"
+                                                                            province="{!items.State__c}"
+                                                                            postalCode="{!items.Postal_Code__c}"
+                                                                            disabled ="true"
+                                                                            />
+                                            </div>  
+                                        </aura:iteration>
+                                    </div>
+                                    <br/>
+                                    <lightning:button name="Place Order" label="Place Order" variant="brand" 
+                                                      onclick="{!c.placeOrder}"/>
+                                    <lightning:button name="add new address" label="Add New Address" variant="brand" 
+                                                      onclick="{!c.addNewAddress}"/>
+                                    <aura:set attribute="else">
+                                        <lightning:input name="street" label="Street" 
+                                                         value="{!v.addressBook.Street__c}"
+                                                         placeholder="Enter Street name here..."
+                                                         required="true"
+                                                         aura:id="address"/>
+                                        <lightning:input name="city" label="City" 
+                                                         value="{!v.addressBook.City__c}"
+                                                         placeholder="Enter City name here..."
+                                                         required="true"
+                                                         aura:id="address"/>
+                                        <lightning:input name="state" label="State" 
+                                                         value="{!v.addressBook.State__c}"
+                                                         placeholder="Enter State name here..."
+                                                         required="true"
+                                                         aura:id="address"/>
+                                        <lightning:input name="postal code" label="Postal Code" 
+                                                         value="{!v.addressBook.Postal_Code__c}"
+                                                         placeholder="Enter Postal code here..."
+                                                         required="true"
+                                                         aura:id="address"/>
+                                        <lightning:input name="country" label="Country" 
+                                                         value="{!v.addressBook.Country__c}"
+                                                         placeholder="Enter City name here..."
+                                                         required="true"
+                                                         aura:id="address"/><br/>
+                                        <lightning:button label="Save Address" variant="brand" 
+                                                          onclick="{!c.doSaveAddress}"/>
+                                    </aura:set>
+                                </aura:if>
+                            </div>
+                        </lightning:layoutItem>
+                    </aura:if>
+                    <lightning:layoutItem padding="around-small" size="3">
+                        <aura:if isTrue="{!v.cartItemList.length > 0}">
+                            <div class="page-section page-right">
+                                <b>Subtotal ({!v.cartItemList.length} item):</b> &nbsp;
+                                <lightning:formattedNumber label="Price" value="{!v.subTotal}"
+                                                           style="currency" currencyCode="USD" />
+                                <br/>
+                                <br/>
+                                
+                                <aura:if isTrue="{!!v.isCouponSuccess}">
+                                    
+                                    Have Coupon?
+                                    <a href="JavaScript:void(0);" onclick="{!c.applycoupon}">
+                                        Apply Here
+                                    </a>
+                                </aura:if>
+                                <aura:if isTrue="{!v.isCouponApplied}">
+                                    <aura:if isTrue="{!!v.isCouponSuccess}">
+                                        <p>
+                                            <lightning:input aura:id="CouponNo" name="input" label="Coupon Code"
+                                                             placeholder="Enter 15 digit Coupon code here..."/>
+                                            <br/>
+                                            <lightning:button label="Apply" variant="brand" onclick="{!c.doapplyCoupon}"/>
+                                        </p>
+                                    </aura:if>
+                                    <aura:if isTrue="{!v.errorDiscount !=null}">
+                                        <p style="color:red;">
+                                            {!v.errorDiscount}
+                                        </p>
+                                    </aura:if>
+                                    <aura:if isTrue="{!v.discountAmount !=null}">
+                                        <p style="color:green;">
+                                            Discount of <b>${!v.discountAmount}</b> has been applied for your products.
+                                        </p>
+                                    </aura:if>
+                                </aura:if>
+                                <br/>
+                                <br/>
+                                <aura:if isTrue="{!!v.isCheckout}">
+                                    <lightning:buttonGroup>
+                                        <lightning:button label="Continue Shop"
+                                                          onclick="{!c.homePage}"/>
+                                        <lightning:button label="Proceed Checkout"
+                                                          variant="brand"
+                                                          onclick="{!c.docheckout}"/>
+                                    </lightning:buttonGroup> 
+                                </aura:if>
+                            </div>
+                        </aura:if>
+                        <div class="page-section page-right">
+                            <h2>Frequently Purchased..</h2>
+                            <p>
+                                
+                                
+                            </p>
+                        </div>
+                    </lightning:layoutItem>
+                </lightning:layout>
+            </lightning:layoutItem>
+            
+            <lightning:layoutItem flexibility="auto" padding="around-small" size="12">
+                <div class="page-footer page-section">
+                   
+                </div>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </div>
+    
+</aura:component>
