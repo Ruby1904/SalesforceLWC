@@ -4,6 +4,7 @@ public class AccountTriggerhandler
     {
         for(Account Acc :(List<Account>)Trigger.new){
             System.debug('Account Record'+Acc);
+            System.debug('success');
         }
     
     }
