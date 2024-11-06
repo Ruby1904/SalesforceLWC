@@ -7,5 +7,6 @@
 .sfdx
 .sf
 .vscode
-
+# Ignore all HTML files
+*.html
 coverage/
