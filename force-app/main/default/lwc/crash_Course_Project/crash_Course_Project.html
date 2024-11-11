@@ -1,0 +1,22 @@
+<template>
+  <lightning-card
+    variant="Narrow"
+    title="Welcome to LWC Crash Course!"
+    icon-name="standard:apex"
+  >
+    <div class="slds-align_absolute-center" style="height: 5rem">
+      {full_name}
+    </div>
+    <div class="slds-p-left_xx-large">
+      <template for:each={contacts} for:item="CurrentItem" for:index="index">
+        <div key={CurrentItem.id}>
+          <img src={CurrentItem.photo} style="height: 5rem" /> <br />
+            {CurrentItem.name}<br />
+            <p><lightning-formatted-email value={CurrentItem.email}></lightning-formatted-email></p><br />
+          <br />
+        </div> 
+      </template>
+    </div>
+    <p slot="footer">Card Footer</p>
+  </lightning-card>
+</template>
