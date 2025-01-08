@@ -5,7 +5,10 @@ export default class MemoryGameLwc extends LightningElement {
   isLoaded = false;
   openedCards = [];
   matchedCard = [];
+  totalTime = "00:00";
+  timerRef;
   moves = 0;
+  showCongratulations = false;
   cards = [
     { id: 1, listClass: "card", type: "diamond", icon: "fa fa-diamond" },
     { id: 2, listClass: "card", type: "plane", icon: "fa fa-paper-plane-o" },
@@ -24,6 +27,10 @@ export default class MemoryGameLwc extends LightningElement {
     { id: 15, listClass: "card", type: "plane", icon: "fa fa-plane" },
     { id: 16, listClass: "card", type: "cube", icon: "fa fa-cube" }
   ];
+  get gameRating() {
+    let stars = this.moves < 12 ? [1, 2, 3] : this.moves >= 13 ? [1, 2] : [1];
+    return this.matchedCard.length === 16 ? stars : [];
+  }
   //lwc hook whenever component is redered will apply css
   renderedCallback() {
     if (!this.isLoaded) {
@@ -46,6 +53,9 @@ export default class MemoryGameLwc extends LightningElement {
     console.log("len is  " + len);
     if (len === 2) {
       this.moves = this.moves + 1;
+      if (this.moves === 1) {
+        this.timer();
+      }
       if (this.openedCards[0].type === this.openedCards[1].type) {
         this.matchedCard = this.matchedCard.concat(
           this.openedCards[0],
@@ -58,6 +68,45 @@ export default class MemoryGameLwc extends LightningElement {
         console.log("unmatched");
       }
     }
+  }
+
+  timer() {
+    let startTime = new Date();
+    // eslint-disable-next-line @lwc/lwc/no-async-operation
+    this.timerRef = setInterval(() => {
+      let diff = new Date().getTime() - startTime.getTime();
+      let d = Math.floor(diff / 1000);
+      const m = Math.floor((d % 3600) / 60);
+      const s = Math.floor((d % 3600) % 60);
+      const mDisplay = m > 0 ? m + (m === 1 ? "minute, " : " minutes, ") : "";
+      const sDisplay = s > 0 ? s + (s === 1 ? "second" : " seconds") : "";
+      this.totalTime = mDisplay + sDisplay;
+    }, 1000);
+  }
+
+  shuffle() {
+    this.showCongratulations = false;
+    this.openedCards = [];
+    this.matchedCard = [];
+    this.totalTime = "00:00";
+    this.moves = 0;
+    window.clearInterval(this.timerRef);
+    let elem = this.template.querySelectorAll(".card");
+    Array.from(elem).forEach((item) => {
+      item.classList.remove("show", "open", "match", "disabled");
+    });
+    /***shuffling and swaping logic */
+    let array = [...this.cards];
+    let counter = array.length;
+    while (counter > 0) {
+      let index = Math.floor(Math.random() * counter);
+      counter--;
+
+      let temp = array[counter];
+      array[counter] = array[index];
+      array[index] = temp;
+    }
+    this.cards = [...array];
   }
 
   matched() {
